@@ -1,0 +1,34 @@
+package com.coldspell.balloonbox.events;
+
+import com.coldspell.balloonbox.BalloonBox;
+import com.coldspell.balloonbox.entities.ModEntityTypes;
+import com.coldspell.balloonbox.util.ConfigHandler;
+import com.google.common.collect.ImmutableSet;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.MobSpawnInfo;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+
+import java.util.Set;
+
+@Mod.EventBusSubscriber(modid = BalloonBox.MOD_ID)
+public class WorldEvents {
+
+    private static final Set<Biome.Category> SPAWNABLE_BIOMES = ImmutableSet.of(Biome.Category.FOREST, Biome.Category.JUNGLE,
+            Biome.Category.PLAINS, Biome.Category.SWAMP, Biome.Category.DESERT, Biome.Category.EXTREME_HILLS,
+            Biome.Category.MESA, Biome.Category.MUSHROOM, Biome.Category.SAVANNA,
+            Biome.Category.TAIGA, Biome.Category.ICY);
+
+    @SubscribeEvent
+    public static void spawnBalloon(BiomeLoadingEvent event){
+        if (SPAWNABLE_BIOMES.contains(event.getCategory())) {
+            event.getSpawns().getSpawner(EntityClassification.CREATURE)
+                    .add(new MobSpawnInfo.Spawners(ModEntityTypes.BALLOON.get(),
+                            ConfigHandler.SETTINGS.spawnWeight.get(),
+                            ConfigHandler.SETTINGS.spawnMin.get(),
+                            ConfigHandler.SETTINGS.spawnMax.get()));
+        }
+    }
+}
